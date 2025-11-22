@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Plus, Printer, Edit } from "lucide-react";
+import PrescriptionPrint from "@/components/PrescriptionPrint";
+import { useReactToPrint } from 'react-to-print';
 
 interface Patient {
   id: string;
@@ -41,6 +43,11 @@ const Prescriptions = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("patient-info");
+  const printRef = useRef<HTMLDivElement>(null);
+  
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+  });
   
   const [formData, setFormData] = useState({
     patient_id: "",
@@ -168,10 +175,6 @@ const Prescriptions = () => {
     });
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -191,21 +194,27 @@ const Prescriptions = () => {
               <DialogHeader>
                 <DialogTitle className="flex items-center justify-between">
                   <span>Add New Prescription</span>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handlePrint}>
-                      <Printer className="mr-2 h-4 w-4" />
-                      Print
-                    </Button>
-                  </div>
+                  <Button variant="outline" size="sm" onClick={handlePrint}>
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print
+                  </Button>
                 </DialogTitle>
               </DialogHeader>
+
+              {/* Hidden print component */}
+              <div style={{ display: 'none' }}>
+                <div ref={printRef}>
+                  <PrescriptionPrint prescriptionData={formData} />
+                </div>
+              </div>
               
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="patient-info">Patient Info</TabsTrigger>
-                  <TabsTrigger value="diagnosis">Diagnosis & Tests</TabsTrigger>
-                  <TabsTrigger value="medications">Medications</TabsTrigger>
-                </TabsList>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="patient-info">Patient Info</TabsTrigger>
+                    <TabsTrigger value="diagnosis">Diagnosis & Tests</TabsTrigger>
+                    <TabsTrigger value="medications">Medications</TabsTrigger>
+                  </TabsList>
 
                 <TabsContent value="patient-info" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -450,6 +459,7 @@ const Prescriptions = () => {
                   <Button type="button" onClick={handleSubmit} className="w-full">Done</Button>
                 </TabsContent>
               </Tabs>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
