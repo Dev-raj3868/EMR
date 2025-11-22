@@ -14,6 +14,7 @@ import Prescriptions from "./pages/Prescriptions";
 import Appointments from "./pages/Appointments";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Billing from "./pages/Billing";
 import LoadingScreen from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Settings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <Billing />
               </ProtectedRoute>
             }
           />

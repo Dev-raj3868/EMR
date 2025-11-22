@@ -131,8 +131,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light/20 via-background to-secondary-light/20 p-4">
-      <Card className="w-full max-w-md border-border shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/5 to-background p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '3s' }} />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
+      </div>
+      
+      <Card className="w-full max-w-md border-border shadow-elevated backdrop-blur-sm bg-card/95 animate-fade-in relative z-10">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <Logo className="w-32 h-32 object-contain" />

@@ -60,26 +60,40 @@ const Dashboard = () => {
       <div className="space-y-6">
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow">
-            <h3 className="text-white text-xl font-semibold mb-2">Add Prescription</h3>
-            <p className="text-green-100 text-sm mb-4">Create new patient prescription</p>
-            <div className="flex justify-center">
+          <div 
+            onClick={() => window.location.href = '/prescriptions'}
+            className="group bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Add Prescription</h3>
+            <p className="text-green-100 text-sm mb-4 relative z-10">Create new patient prescription</p>
+            <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
               <FileText className="w-16 h-16 text-white" />
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow">
-            <h3 className="text-white text-xl font-semibold mb-2">Manage Records</h3>
-            <p className="text-blue-100 text-sm mb-4">View and update patient records</p>
-            <div className="flex justify-center">
-              <Users className="w-16 h-16 text-white" />
+          <div 
+            onClick={() => window.location.href = '/billing'}
+            className="group bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+            style={{ animationDelay: '0.1s' }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Billing</h3>
+            <p className="text-blue-100 text-sm mb-4 relative z-10">View and track invoices</p>
+            <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
+              <CreditCard className="w-16 h-16 text-white" />
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow">
-            <h3 className="text-white text-xl font-semibold mb-2">Manage Patients</h3>
-            <p className="text-yellow-100 text-sm mb-4">Add and manage patient information</p>
-            <div className="flex justify-center">
+          <div 
+            onClick={() => window.location.href = '/patients'}
+            className="group bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+            style={{ animationDelay: '0.2s' }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Patients</h3>
+            <p className="text-yellow-100 text-sm mb-4 relative z-10">Add and manage patient information</p>
+            <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
               <Users className="w-16 h-16 text-white" />
             </div>
           </div>
