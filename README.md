@@ -1,1 +1,1 @@
-https://nexusclinic.netlify.app/
+https://nexus016.lovable.app
