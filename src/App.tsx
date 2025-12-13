@@ -9,12 +9,12 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Patients from "./pages/Patients";
-import Doctors from "./pages/Doctors";
 import Prescriptions from "./pages/Prescriptions";
-import Appointments from "./pages/Appointments";
 import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
 import Billing from "./pages/Billing";
+import Medicine from "./pages/Medicine";
+import Diagnostics from "./pages/Diagnostics";
+import Analytics from "./pages/Analytics";
 import LoadingScreen from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
@@ -64,26 +64,10 @@ const App = () => {
             }
           />
           <Route
-            path="/doctors"
-            element={
-              <ProtectedRoute>
-                <Doctors />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/prescriptions"
             element={
               <ProtectedRoute>
                 <Prescriptions />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/appointments"
-            element={
-              <ProtectedRoute>
-                <Appointments />
               </ProtectedRoute>
             }
           />
@@ -96,18 +80,34 @@ const App = () => {
             }
           />
           <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/billing"
             element={
               <ProtectedRoute>
                 <Billing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/medicine"
+            element={
+              <ProtectedRoute>
+                <Medicine />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/diagnostics"
+            element={
+              <ProtectedRoute>
+                <Diagnostics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
               </ProtectedRoute>
             }
           />

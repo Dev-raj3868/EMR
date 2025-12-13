@@ -2,9 +2,10 @@ import {
   LayoutDashboard,
   Users,
   FileText,
-  UserCog,
-  Calendar,
-  Settings,
+  Pill,
+  FlaskConical,
+  BarChart3,
+  CreditCard,
   LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -29,17 +30,15 @@ import {
 const mainItems = [
   { title: "Home", url: "/dashboard", icon: LayoutDashboard },
   { title: "Patients", url: "/patients", icon: Users },
-  { title: "Doctors", url: "/doctors", icon: UserCog },
   { title: "Prescriptions", url: "/prescriptions", icon: FileText },
-  { title: "Appointments", url: "/appointments", icon: Calendar },
+  { title: "Your Medicine", url: "/medicine", icon: Pill },
+  { title: "Diagnostics", url: "/diagnostics", icon: FlaskConical },
+  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const managementItems = [
   { title: "Profile", url: "/profile", icon: Users },
-];
-
-const otherItems = [
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ];
 
 export function AppSidebar() {
@@ -102,23 +101,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Other</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {otherItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink to={item.url}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border p-4">
