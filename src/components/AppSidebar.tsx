@@ -1,12 +1,11 @@
 import {
   LayoutDashboard,
-  Users,
   FileText,
   Pill,
   FlaskConical,
   BarChart3,
-  CreditCard,
   LogOut,
+  Users,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -29,11 +28,9 @@ import {
 
 const mainItems = [
   { title: "Home", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Patients", url: "/patients", icon: Users },
   { title: "Prescriptions", url: "/prescriptions", icon: FileText },
   { title: "Your Medicine", url: "/medicine", icon: Pill },
   { title: "Diagnostics", url: "/diagnostics", icon: FlaskConical },
-  { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
 const managementItems = [
