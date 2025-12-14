@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Plus, Printer } from "lucide-react";
+import { Plus, Printer, Search } from "lucide-react";
 import PrescriptionPrint from "@/components/PrescriptionPrint";
 import { useReactToPrint } from 'react-to-print';
 
@@ -20,6 +20,7 @@ interface Patient {
   phone: string;
   age: number;
   gender: string;
+  address?: string;
 }
 
 const Prescriptions = () => {
@@ -31,6 +32,18 @@ const Prescriptions = () => {
   const [showDoctorInfo, setShowDoctorInfo] = useState(false);
   const [showPatientInfo, setShowPatientInfo] = useState(false);
   const [showBottomInfo, setShowBottomInfo] = useState(false);
+  
+  // Patient mode: 'new' or 'existing'
+  const [patientMode, setPatientMode] = useState<'new' | 'existing'>('existing');
+  const [phoneSearch, setPhoneSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [newPatientData, setNewPatientData] = useState({
+    full_name: "",
+    phone: "",
+    age: "",
+    gender: "",
+    address: "",
+  });
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -152,6 +165,89 @@ const Prescriptions = () => {
       follow_up_time: "",
       surgery_advice: "",
     });
+    setNewPatientData({
+      full_name: "",
+      phone: "",
+      age: "",
+      gender: "",
+      address: "",
+    });
+    setPhoneSearch("");
+  };
+
+  // Search patient by phone number
+  const searchPatientByPhone = async () => {
+    if (!phoneSearch.trim() || !user) return;
+    
+    setIsSearching(true);
+    const { data, error } = await supabase
+      .from("patients")
+      .select("id, full_name, phone, age, gender, address")
+      .eq("doctor_id", user.id)
+      .eq("phone", phoneSearch.trim())
+      .maybeSingle();
+    
+    setIsSearching(false);
+    
+    if (error) {
+      toast.error("Error searching patient");
+      return;
+    }
+    
+    if (data) {
+      setFormData({
+        ...formData,
+        patient_id: data.id,
+        patient_name: data.full_name,
+        phone: data.phone,
+        age: data.age,
+        gender: data.gender,
+      });
+      toast.success("Patient found!");
+    } else {
+      toast.error("No patient found with this phone number");
+    }
+  };
+
+  // Add new patient
+  const addNewPatient = async () => {
+    if (!user) return;
+    
+    if (!newPatientData.full_name || !newPatientData.phone || !newPatientData.gender || !newPatientData.age) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("patients")
+      .insert({
+        doctor_id: user.id,
+        full_name: newPatientData.full_name,
+        phone: newPatientData.phone,
+        age: parseInt(newPatientData.age),
+        gender: newPatientData.gender,
+        address: newPatientData.address || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Failed to add patient");
+      return;
+    }
+
+    if (data) {
+      setFormData({
+        ...formData,
+        patient_id: data.id,
+        patient_name: data.full_name,
+        phone: data.phone,
+        age: data.age,
+        gender: data.gender,
+      });
+      toast.success("Patient added successfully!");
+      fetchData();
+    }
   };
 
   return (
@@ -203,61 +299,144 @@ const Prescriptions = () => {
 
             {/* Prescription Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Patient Info Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Patient Name</Label>
-                  <Select
-                    value={formData.patient_id}
-                    onValueChange={(value) => {
-                      const patient = patients.find(p => p.id === value);
-                      if (patient) {
-                        setFormData({
-                          ...formData,
-                          patient_id: value,
-                          patient_name: patient.full_name,
-                          phone: patient.phone,
-                          age: patient.age,
-                          gender: patient.gender,
-                        });
-                      }
-                    }}
+              {/* Patient Information Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <span className="font-medium text-foreground">Patient Information</span>
+                  <button
+                    type="button"
+                    onClick={() => setPatientMode(patientMode === 'new' ? 'existing' : 'new')}
+                    className="text-primary font-medium hover:underline"
                   >
-                    <SelectTrigger className="bg-blue-50">
-                      <SelectValue placeholder="Select patient" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {patients.map((patient) => (
-                        <SelectItem key={patient.id} value={patient.id}>
-                          {patient.full_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    {patientMode === 'new' ? 'Search Existing' : 'Add'}
+                  </button>
                 </div>
-                <div className="space-y-2">
-                  <Label>Phone number</Label>
-                  <Input value={formData.phone} readOnly className="bg-blue-50" />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Patient Gender</Label>
-                  <Select value={formData.gender} disabled>
-                    <SelectTrigger className="bg-blue-50">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Patient Age</Label>
-                  <Input type="number" value={formData.age} readOnly className="bg-blue-50" />
-                </div>
+                {patientMode === 'existing' ? (
+                  /* Existing Patient - Search by Phone */
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-sm">Phone Number<span className="text-destructive">*</span></Label>
+                      <div className="relative">
+                        <Input
+                          placeholder="Search by phone number..."
+                          value={phoneSearch}
+                          onChange={(e) => setPhoneSearch(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), searchPatientByPhone())}
+                          className="border-primary/50 focus:border-primary pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={searchPatientByPhone}
+                          disabled={isSearching}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                        >
+                          <Search className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Patient Name<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Enter name"
+                        value={formData.patient_name}
+                        readOnly
+                        className="bg-muted/50"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Gender<span className="text-destructive">*</span></Label>
+                      <Select value={formData.gender} disabled>
+                        <SelectTrigger className="bg-muted/50">
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Age<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Age"
+                        value={formData.age || ""}
+                        readOnly
+                        className="bg-muted/50"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Address<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Address"
+                        value={formData.phone}
+                        readOnly
+                        className="bg-muted/50"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* New Patient Form */
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-sm">Phone Number<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="+91 XXXXX XXXXX"
+                        value={newPatientData.phone}
+                        onChange={(e) => setNewPatientData({ ...newPatientData, phone: e.target.value })}
+                        className="border-primary/50 focus:border-primary"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Patient Name<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Enter name"
+                        value={newPatientData.full_name}
+                        onChange={(e) => setNewPatientData({ ...newPatientData, full_name: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Gender<span className="text-destructive">*</span></Label>
+                      <Select
+                        value={newPatientData.gender}
+                        onValueChange={(value) => setNewPatientData({ ...newPatientData, gender: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Age<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Age"
+                        type="number"
+                        value={newPatientData.age}
+                        onChange={(e) => setNewPatientData({ ...newPatientData, age: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm">Address<span className="text-destructive">*</span></Label>
+                      <Input
+                        placeholder="Address"
+                        value={newPatientData.address}
+                        onChange={(e) => setNewPatientData({ ...newPatientData, address: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {patientMode === 'new' && (
+                  <Button type="button" onClick={addNewPatient} variant="outline" size="sm">
+                    Save Patient
+                  </Button>
+                )}
               </div>
 
               {/* Complaints */}
