@@ -1,1 +1,1 @@
-https://nexus016.lovable.app
+https://nexus016.netlify.app/
