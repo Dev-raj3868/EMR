@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ChartCard from "@/components/ChartCard";
 import StatCard from "@/components/StatCard";
-import { BarChart3, Users, FileText, CreditCard, TrendingUp, Activity } from "lucide-react";
+import { BarChart3, Users, FileText, CreditCard, TrendingUp, Activity, Filter } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Analytics = () => {
   const { user } = useAuth();
+  const [timeFilter, setTimeFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   const { data: patients = [] } = useQuery({
     queryKey: ["patients-analytics", user?.id],
@@ -84,15 +89,52 @@ const Analytics = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary/10 rounded-xl">
-            <BarChart3 className="h-8 w-8 text-primary" />
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary/10 rounded-xl">
+              <BarChart3 className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
+              <p className="text-muted-foreground">Track your clinic performance</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
-            <p className="text-muted-foreground">Track your clinic performance</p>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Filter
+            </Button>
           </div>
         </div>
+
+        {showFilters && (
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="space-y-1">
+                  <label className="text-sm text-muted-foreground">Time Period</label>
+                  <Select value={timeFilter} onValueChange={setTimeFilter}>
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Time</SelectItem>
+                      <SelectItem value="today">Today</SelectItem>
+                      <SelectItem value="week">This Week</SelectItem>
+                      <SelectItem value="month">This Month</SelectItem>
+                      <SelectItem value="year">This Year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
@@ -152,7 +194,7 @@ const Analytics = () => {
                     <span className="w-12 text-sm">{item.name}</span>
                     <div className="w-48 h-4 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-secondary rounded-full transition-all"
+                        className="h-full bg-primary rounded-full transition-all"
                         style={{ width: `${totalRevenue > 0 ? (item.value / totalRevenue) * 100 : 0}%` }}
                       />
                     </div>
