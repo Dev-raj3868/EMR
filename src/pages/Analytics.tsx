@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ChartCard from "@/components/ChartCard";
 import StatCard from "@/components/StatCard";
@@ -12,7 +14,10 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Analytics = () => {
   const { user } = useAuth();
-  const [timeFilter, setTimeFilter] = useState("all");
+  const [dateRange, setDateRange] = useState("this-month");
+  const [filterBy, setFilterBy] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: patients = [] } = useQuery({
@@ -114,23 +119,63 @@ const Analytics = () => {
 
         {showFilters && (
           <Card className="border-border/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="space-y-1">
-                  <label className="text-sm text-muted-foreground">Time Period</label>
-                  <Select value={timeFilter} onValueChange={setTimeFilter}>
-                    <SelectTrigger className="w-[150px]">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 text-primary mb-4">
+                <Filter className="h-5 w-5" />
+                <span className="font-semibold">Filters</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Date Range</Label>
+                  <Select value={dateRange} onValueChange={setDateRange}>
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Time</SelectItem>
                       <SelectItem value="today">Today</SelectItem>
-                      <SelectItem value="week">This Week</SelectItem>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="year">This Year</SelectItem>
+                      <SelectItem value="this-week">This Week</SelectItem>
+                      <SelectItem value="this-month">This Month</SelectItem>
+                      <SelectItem value="this-year">This Year</SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Filter By</Label>
+                  <Select value={filterBy} onValueChange={setFilterBy}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="patients">Patients</SelectItem>
+                      <SelectItem value="prescriptions">Prescriptions</SelectItem>
+                      <SelectItem value="revenue">Revenue</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">From Date</Label>
+                  <Input
+                    type="date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">To Date</Label>
+                  <Input
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end mt-4">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                  <Filter className="h-4 w-4" />
+                  Apply Filters
+                </Button>
               </div>
             </CardContent>
           </Card>

@@ -37,6 +37,8 @@ const Prescriptions = () => {
   const [patientMode, setPatientMode] = useState<'new' | 'existing'>('existing');
   const [phoneSearch, setPhoneSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState<Patient[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [newPatientData, setNewPatientData] = useState({
     full_name: "",
     phone: "",
@@ -175,38 +177,45 @@ const Prescriptions = () => {
     setPhoneSearch("");
   };
 
-  // Search patient by phone number
-  const searchPatientByPhone = async () => {
-    if (!phoneSearch.trim() || !user) return;
+  // Search patient suggestions by phone number
+  const searchPatientSuggestions = async (searchValue: string) => {
+    if (!searchValue.trim() || !user) {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
     
     setIsSearching(true);
     const { data, error } = await supabase
       .from("patients")
       .select("id, full_name, phone, age, gender, address")
       .eq("doctor_id", user.id)
-      .eq("phone", phoneSearch.trim())
-      .maybeSingle();
+      .ilike("phone", `%${searchValue.trim()}%`)
+      .limit(5);
     
     setIsSearching(false);
     
     if (error) {
-      toast.error("Error searching patient");
       return;
     }
     
-    if (data) {
-      setFormData({
-        ...formData,
-        patient_id: data.id,
-        patient_name: data.full_name,
-        phone: data.phone,
-        age: data.age,
-        gender: data.gender,
-      });
-      toast.success("Patient found!");
-    } else {
-      toast.error("No patient found with this phone number");
-    }
+    setSearchSuggestions(data || []);
+    setShowSuggestions((data || []).length > 0);
+  };
+
+  // Select patient from suggestions
+  const selectPatient = (patient: Patient) => {
+    setFormData({
+      ...formData,
+      patient_id: patient.id,
+      patient_name: patient.full_name,
+      phone: patient.phone,
+      age: patient.age,
+      gender: patient.gender,
+    });
+    setPhoneSearch(patient.phone);
+    setShowSuggestions(false);
+    toast.success("Patient selected!");
   };
 
   // Add new patient
@@ -303,37 +312,55 @@ const Prescriptions = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <span className="font-medium text-foreground">Patient Information</span>
-                  <button
-                    type="button"
-                    onClick={() => setPatientMode(patientMode === 'new' ? 'existing' : 'new')}
-                    className="text-primary font-medium hover:underline"
-                  >
-                    {patientMode === 'new' ? 'Search Existing' : 'Add'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm ${patientMode === 'new' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                      New Patient
+                    </span>
+                    <Switch
+                      checked={patientMode === 'existing'}
+                      onCheckedChange={(checked) => setPatientMode(checked ? 'existing' : 'new')}
+                      className="data-[state=checked]:bg-secondary data-[state=unchecked]:bg-muted"
+                    />
+                    <span className={`text-sm ${patientMode === 'existing' ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                      Existing Patient
+                    </span>
+                  </div>
                 </div>
 
                 {patientMode === 'existing' ? (
                   /* Existing Patient - Search by Phone */
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div className="space-y-1">
+                    <div className="space-y-1 relative">
                       <Label className="text-sm">Phone Number<span className="text-destructive">*</span></Label>
                       <div className="relative">
                         <Input
                           placeholder="Search by phone number..."
                           value={phoneSearch}
-                          onChange={(e) => setPhoneSearch(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), searchPatientByPhone())}
+                          onChange={(e) => {
+                            setPhoneSearch(e.target.value);
+                            searchPatientSuggestions(e.target.value);
+                          }}
+                          onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
+                          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                           className="border-primary/50 focus:border-primary pr-10"
                         />
-                        <button
-                          type="button"
-                          onClick={searchPatientByPhone}
-                          disabled={isSearching}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
-                        >
-                          <Search className="h-4 w-4" />
-                        </button>
+                        <Search className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       </div>
+                      {showSuggestions && searchSuggestions.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                          {searchSuggestions.map((patient) => (
+                            <button
+                              key={patient.id}
+                              type="button"
+                              onClick={() => selectPatient(patient)}
+                              className="w-full px-3 py-2 text-left hover:bg-muted transition-colors border-b border-border/50 last:border-0"
+                            >
+                              <div className="font-medium text-sm">{patient.full_name}</div>
+                              <div className="text-xs text-muted-foreground">{patient.phone} • {patient.age}yrs • {patient.gender}</div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="space-y-1">
                       <Label className="text-sm">Patient Name<span className="text-destructive">*</span></Label>

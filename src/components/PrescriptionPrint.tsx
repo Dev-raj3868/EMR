@@ -70,9 +70,11 @@ const PrescriptionPrint = ({ prescriptionData }: PrescriptionPrintProps) => {
             <p>Qualification: {doctorProfile?.specialization || ''}</p>
             <p>Specialization: {doctorProfile?.specialization || ''}</p>
           </div>
-          <div className="w-24 h-24 border border-gray-300 flex items-center justify-center text-xs text-gray-500">
-            Logo
-          </div>
+          <img 
+            src="/nexus-logo.jpg" 
+            alt="Nexus Logo" 
+            className="w-24 h-24 object-contain"
+          />
         </div>
       </div>
 
