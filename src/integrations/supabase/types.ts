@@ -251,37 +251,55 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
           clinic_name: string
           created_at: string | null
           email: string
+          experience: string | null
           full_name: string
+          gender: string | null
           id: string
+          nmc_id: string | null
           phone: string | null
+          qualification: string | null
           shift: string
           specialization: string | null
           updated_at: string | null
+          working_days: string[] | null
         }
         Insert: {
+          age?: number | null
           clinic_name: string
           created_at?: string | null
           email: string
+          experience?: string | null
           full_name: string
+          gender?: string | null
           id: string
+          nmc_id?: string | null
           phone?: string | null
+          qualification?: string | null
           shift: string
           specialization?: string | null
           updated_at?: string | null
+          working_days?: string[] | null
         }
         Update: {
+          age?: number | null
           clinic_name?: string
           created_at?: string | null
           email?: string
+          experience?: string | null
           full_name?: string
+          gender?: string | null
           id?: string
+          nmc_id?: string | null
           phone?: string | null
+          qualification?: string | null
           shift?: string
           specialization?: string | null
           updated_at?: string | null
+          working_days?: string[] | null
         }
         Relationships: []
       }
