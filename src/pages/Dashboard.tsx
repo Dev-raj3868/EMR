@@ -78,8 +78,8 @@ const Dashboard = () => {
             style={{ animationDelay: '0.1s' }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Billing</h3>
-            <p className="text-blue-100 text-sm mb-4 relative z-10">View and track invoices</p>
+            <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Records</h3>
+            <p className="text-blue-100 text-sm mb-4 relative z-10">View and Manage Records</p>
             <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
               <CreditCard className="w-16 h-16 text-white" />
             </div>
@@ -105,67 +105,7 @@ const Dashboard = () => {
           <p className="text-red-600">No appointments available</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            title="Total Doctors"
-            value="0"
-            icon={Stethoscope}
-            variant="primary"
-          />
-          <StatCard
-            title="Total Employees"
-            value="0"
-            icon={Users}
-            variant="secondary"
-          />
-          <StatCard
-            title="Type of tests"
-            value="0"
-            icon={TestTube}
-            variant="primary"
-          />
-          <StatCard
-            title="Patients with Cards"
-            value="0"
-            icon={CreditCard}
-            variant="secondary"
-          />
-        </div>
-
-        {/* Collection and Tests Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartCard title="Today's Collection">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary">₹25,000/-</div>
-              <div className="text-sm text-secondary font-medium">
-                Up 10% ↑
-              </div>
-            </div>
-          </ChartCard>
-
-          <ChartCard title="Today's Tests">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary">0</div>
-              <div className="text-sm text-muted-foreground">% -</div>
-            </div>
-          </ChartCard>
-
-          <ChartCard title="Today's Radiology">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary">0</div>
-              <div className="text-sm text-muted-foreground">% -</div>
-            </div>
-          </ChartCard>
-
-          <ChartCard title="Today's Pathology">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-primary">0</div>
-              <div className="text-sm text-muted-foreground">% -</div>
-            </div>
-          </ChartCard>
-        </div>
-
+       
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ChartCard title="Weekly Appointments" onViewDetails={() => {}}>
