@@ -15,6 +15,8 @@ import Billing from "./pages/Billing";
 import Medicine from "./pages/Medicine";
 import Diagnostics from "./pages/Diagnostics";
 import Analytics from "./pages/Analytics";
+import ManageRecords from "./pages/ManageRecords";
+import ManagePatients from "./pages/ManagePatients";
 import LoadingScreen from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
@@ -108,6 +110,22 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-records"
+            element={
+              <ProtectedRoute>
+                <ManageRecords />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-patients"
+            element={
+              <ProtectedRoute>
+                <ManagePatients />
               </ProtectedRoute>
             }
           />

@@ -1,7 +1,7 @@
 // Dashboard page with quick actions and statistics
-import { Users, Stethoscope, TestTube, CreditCard, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Users, CreditCard, FileText, CalendarIcon } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
-import StatCard from "@/components/StatCard";
 import ChartCard from "@/components/ChartCard";
 import {
   BarChart,
@@ -13,7 +13,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 import {
   Table,
@@ -23,6 +22,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+interface Appointment {
+  id: string;
+  patient_id: string;
+  appointment_date: string;
+  status: string;
+  notes: string | null;
+  patients: {
+    full_name: string;
+    phone: string;
+    age: number;
+    gender: string;
+  } | null;
+}
 
 const weeklyAppointmentsData = [
   { day: "M", appointments: 45 },
@@ -55,6 +79,50 @@ const testData = [
 ];
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchAppointments();
+    }
+  }, [user, selectedDate]);
+
+  const fetchAppointments = async () => {
+    setIsLoading(true);
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const { data, error } = await supabase
+      .from("appointments")
+      .select(`
+        id,
+        patient_id,
+        appointment_date,
+        status,
+        notes,
+        patients (
+          full_name,
+          phone,
+          age,
+          gender
+        )
+      `)
+      .eq("doctor_id", user?.id)
+      .gte("appointment_date", startOfDay.toISOString())
+      .lte("appointment_date", endOfDay.toISOString())
+      .order("appointment_date", { ascending: true });
+
+    if (!error && data) {
+      setAppointments(data);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -62,9 +130,8 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div 
             onClick={() => window.location.href = '/prescriptions'}
-            className="group bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+            className="group bg-green-500 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Add Prescription</h3>
             <p className="text-green-100 text-sm mb-4 relative z-10">Create new patient prescription</p>
             <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
@@ -73,11 +140,10 @@ const Dashboard = () => {
           </div>
           
           <div 
-            onClick={() => window.location.href = '/billing'}
-            className="group bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+            onClick={() => window.location.href = '/manage-records'}
+            className="group bg-blue-500 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
             style={{ animationDelay: '0.1s' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Records</h3>
             <p className="text-blue-100 text-sm mb-4 relative z-10">View and Manage Records</p>
             <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
@@ -86,11 +152,10 @@ const Dashboard = () => {
           </div>
           
           <div 
-            onClick={() => window.location.href = '/patients'}
-            className="group bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
+            onClick={() => window.location.href = '/manage-patients'}
+            className="group bg-yellow-500 p-6 rounded-xl cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-fade-in relative overflow-hidden"
             style={{ animationDelay: '0.2s' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <h3 className="text-white text-xl font-semibold mb-2 relative z-10">Manage Patients</h3>
             <p className="text-yellow-100 text-sm mb-4 relative z-10">Add and manage patient information</p>
             <div className="flex justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300">
@@ -100,12 +165,72 @@ const Dashboard = () => {
         </div>
 
         {/* Today's Appointments */}
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-red-900 font-semibold mb-2">Today's Appointments / Follow-Ups (0)</h3>
-          <p className="text-red-600">No appointments available</p>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-foreground font-semibold">
+              Today's Appointments / Follow-Ups ({appointments.length})
+            </h3>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(selectedDate, "dd/MM/yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-background" align="end">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          {isLoading ? (
+            <p className="text-muted-foreground text-center py-4">Loading...</p>
+          ) : appointments.length === 0 ? (
+            <p className="text-muted-foreground text-center py-4">No appointments for this date</p>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Queue</TableHead>
+                    <TableHead>Patient Name</TableHead>
+                    <TableHead>Phone Number</TableHead>
+                    <TableHead>Age</TableHead>
+                    <TableHead>Gender</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {appointments.map((appointment, index) => (
+                    <TableRow key={appointment.id}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell>{appointment.patients?.full_name || "N/A"}</TableCell>
+                      <TableCell>{appointment.patients?.phone || "N/A"}</TableCell>
+                      <TableCell>{appointment.patients?.age || "N/A"}</TableCell>
+                      <TableCell>{appointment.patients?.gender || "N/A"}</TableCell>
+                      <TableCell>
+                        <span className={cn(
+                          "px-2 py-1 rounded-full text-xs",
+                          appointment.status === "completed" && "bg-green-100 text-green-800",
+                          appointment.status === "scheduled" && "bg-blue-100 text-blue-800",
+                          appointment.status === "cancelled" && "bg-red-100 text-red-800"
+                        )}>
+                          {appointment.status || "scheduled"}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </div>
 
-       
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ChartCard title="Weekly Appointments" onViewDetails={() => {}}>
