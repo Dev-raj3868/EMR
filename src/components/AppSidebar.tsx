@@ -6,6 +6,7 @@ import {
   BarChart3,
   LogOut,
   Users,
+  User,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -29,6 +30,7 @@ import {
 const mainItems = [
   { title: "Home", url: "/dashboard", icon: LayoutDashboard },
   { title: "Prescriptions", url: "/prescriptions", icon: FileText },
+   { title: "Patient Details", url: "/details", icon: User },
   { title: "Your Medicine", url: "/medicine", icon: Pill },
   { title: "Diagnostics", url: "/diagnostics", icon: FlaskConical },
 ];

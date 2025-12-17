@@ -18,6 +18,7 @@ import Analytics from "./pages/Analytics";
 import ManageRecords from "./pages/ManageRecords";
 import ManagePatients from "./pages/ManagePatients";
 import LoadingScreen from "./components/LoadingScreen";
+import PatientInfo from "./pages/PatientInfo";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,15 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Prescriptions />
+              </ProtectedRoute>
+            }
+          />
+
+           <Route
+            path="/details"
+            element={
+              <ProtectedRoute>
+                <PatientInfo />
               </ProtectedRoute>
             }
           />

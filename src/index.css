@@ -131,3 +131,65 @@ All colors MUST be HSL.
     animation: fade-in 0.6s ease-out forwards;
   }
 }
+
+
+
+
+/* Priting css */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 21cm !important;
+    height: 29.7cm !important;
+    overflow: hidden !important;
+    background: white !important;
+  }
+
+  /* Hide everything */
+  body * {
+    visibility: hidden !important;
+  }
+
+ 
+  #prescription-print-area,
+  #prescription-print-area * {
+    visibility: visible !important;
+  }
+
+ 
+  #prescription-print-area {
+    position: fixed !important;   
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 21cm !important;
+    height: 29.7cm !important;    
+    padding: 1cm !important;
+
+    box-sizing: border-box !important;
+    overflow: hidden !important; 
+
+    background: white !important;
+  }
+
+
+  #prescription-print-area .space-y-4 > * + * {
+    margin-top: 0 !important;
+  }
+
+  table,
+  tr,
+  td,
+  th,
+  section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
