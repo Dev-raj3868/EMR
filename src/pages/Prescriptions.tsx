@@ -1217,7 +1217,7 @@ const handleDelete = useCallback(() => {
     
 
       {/* ================= MAIN WHITE CONTAINER ================= */}
-      <div className="bg-white rounded-xl shadow-sm p-6 space-y-6 mt-6">
+      <div className="bg-slate-100 rounded-xl shadow-sm p-6 space-y-6 mt-6">
           {/* PATIENT SECTION (UNCHANGED) */}
       <PatientSection
         patientSnapshot={patientSnapshot}
@@ -1235,11 +1235,12 @@ const handleDelete = useCallback(() => {
         {/* Complaints – Full Row */}
         <div>
           <Label>Complaints</Label>
-          <Textarea
+          <Textarea 
             rows={4}
-           
+           placeholder="Enter Complaints..."
             value={complaints}
             onChange={(e) => setComplaints(e.target.value)}
+             className="bg-slate-50 "
           />
         </div>
 
@@ -1287,19 +1288,21 @@ const handleDelete = useCallback(() => {
 
         {/* Vitals – Single Row (No Height) */}
         <div>
-          <VitalsSection vitals={vitals} onVitalsChange={setVitals} />
+          <VitalsSection vitals={vitals} onVitalsChange={setVitals}  />
+          
         </div>
 
         {/* Diagnosis – Full Row */}
        <div>
   <Label>Diagnosis</Label>
        
-  <div className="flex gap-2 mt-2">
+  <div className="flex gap-2 mt-2 ">
     <Textarea
       placeholder="Enter diagnosis..."
       value={diagnosisInput}
       onChange={(e) => setDiagnosisInput(e.target.value)}
       onKeyDown={(e) => e.key === "Enter" && addDiagnosis()}
+    className="bg-slate-50 "
     />
     <Button
       type="button"
@@ -1342,6 +1345,7 @@ const handleDelete = useCallback(() => {
 
   {/* One Row: Input (40%) + List (60%) */}
   <div className="flex items-start gap-3 mt-2">
+    
 
     {/* Left – 40% Input */}
     <div className="w-[40%] flex gap-2">
@@ -1350,7 +1354,8 @@ const handleDelete = useCallback(() => {
         value={testInput}
         onChange={(e) => setTestInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && addTest()}
-        className="h-8 text-sm px-2"
+        className="h-8 text-sm px-2 bg-slate-50"
+
       />
 
       <Button
@@ -1389,8 +1394,6 @@ const handleDelete = useCallback(() => {
 </div>
 
 
-
-        {/* Medicines – Full Row */}
         <div>
           <MedicinesSection
             medicines={medicines}
@@ -1406,9 +1409,12 @@ const handleDelete = useCallback(() => {
     <Label>General Advice</Label>
     <Textarea
       rows={3}
-      className="mt-2"
+      className="mt-2 bg-slate-50"
       value={generalAdvice}
+      placeholder="Enter any advice"
+
       onChange={(e) => setGeneralAdvice(e.target.value)}
+      
     />
   </div>
 
@@ -1463,12 +1469,6 @@ const handleDelete = useCallback(() => {
 
     {/* Datalist */}
     <datalist id="followup-months">
-      <option value="1 Week" />
-      <option value="15 Days" />
-      <option value="1 Month" />
-      <option value="2 Months" />
-      <option value="3 Months" />
-      <option value="6 Months" />
       <option value="January" />
       <option value="February" />
       <option value="March" />
@@ -1494,8 +1494,9 @@ const handleDelete = useCallback(() => {
           <Label>Surgery Advice</Label>
           <Textarea
             rows={3}
-             className="mt-2"
+             className="mt-2 bg-slate-50"
             value={surgeryAdvice}
+            placeholder="Only if applicable"
             onChange={(e) => setSurgeryAdvice(e.target.value)}
           />
         </div>

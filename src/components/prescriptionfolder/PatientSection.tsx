@@ -59,7 +59,7 @@ export function PatientSection({
   };
 
   return (
- <div className="border-hidden bg-card p-4">
+ <div className="border-hidden bg-card p-4 bg-slate-50">
   {/* Top row: 3 columns */}
   <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 mb-4">
     {/* Column 1: Heading */}

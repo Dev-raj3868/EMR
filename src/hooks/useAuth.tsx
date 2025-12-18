@@ -54,7 +54,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-/* ===================== TYPES ===================== */
 type DoctorAuthProfile = {
   doctor_id: string;
   name?: string;
@@ -67,7 +66,6 @@ type DoctorClinic = {
   clinic_name: string;
 };
 
-/* ===================== HOOK ===================== */
 export const useAuth = () => {
   const [doctor, setDoctor] = useState<DoctorAuthProfile | null>(null);
   const [clinics, setClinics] = useState<DoctorClinic[]>([]);
@@ -76,7 +74,7 @@ export const useAuth = () => {
 
   const navigate = useNavigate();
 
-  /* ===================== HELPER: Safe JSON Parse ===================== */
+
   const safeParse = <T,>(value: string | null): T | null => {
     if (!value || value === "undefined") return null;
     try {
@@ -87,7 +85,6 @@ export const useAuth = () => {
     }
   };
 
-  /* ===================== INIT ===================== */
   useEffect(() => {
     const storedDoctor = safeParse<DoctorAuthProfile>(
       localStorage.getItem("doctor_profile")
@@ -107,7 +104,7 @@ export const useAuth = () => {
     setLoading(false);
   }, []);
 
-  /* ===================== LOGIN ===================== */
+ 
   const login = (data: { doctor: DoctorAuthProfile; clinics: DoctorClinic[] }) => {
     localStorage.setItem("doctor_profile", JSON.stringify(data.doctor));
     localStorage.setItem("doctor_clinics", JSON.stringify(data.clinics));
@@ -121,17 +118,17 @@ export const useAuth = () => {
     setClinics(data.clinics);
     setActiveClinic(defaultClinic);
 
-    // Redirect to /home
+
     navigate("/dashboard", { replace: true });
   };
 
-  /* ===================== CLINIC SWITCH ===================== */
+ 
   const switchClinic = (clinic: DoctorClinic) => {
     localStorage.setItem("active_clinic", JSON.stringify(clinic));
     setActiveClinic(clinic);
   };
 
-  /* ===================== LOGOUT ===================== */
+
   const logout = () => {
     localStorage.removeItem("doctor_profile");
     localStorage.removeItem("doctor_clinics");
@@ -144,7 +141,7 @@ export const useAuth = () => {
     navigate("/auth");
   };
 
-  /* ===================== RETURN ===================== */
+
   return {
     doctor,
     clinics,

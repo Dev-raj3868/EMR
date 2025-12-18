@@ -66,7 +66,7 @@ const { doctor, activeClinic } = useAuth();
     year: "numeric",
   });
 
-  // Merge prop doctorInfo with useAuth hook values
+  // taken from useAuth 
   const mergedDoctorInfo = {
     name: doctorInfo?.name || doctor?.name,
     qualification: doctorInfo?.qualification || doctor?.specialization,
@@ -75,7 +75,7 @@ const { doctor, activeClinic } = useAuth();
     phone: doctorInfo?.phone,
   };
 
-// PRINT 
+
 const handlePrint = () => {
   window.print();
 };
@@ -170,36 +170,37 @@ const handlePrint = () => {
          {/* Header: Doctor Left, Logo Center, Patient Right */}
        <header className="mb-6">
   {/* Top Row: Doctor Info + Logo */}
-  <div className="flex justify-between items-start mb-2">
+ <div className="flex justify-between items-start mb-2">
+  {showDoctorInfo && (
+    <>
+      {/* Doctor Info (Left) */}
+      <div className="flex flex-col gap-0.5 text-black text-sm">
+        <h1 className="text-lg font-bold">
+          {mergedDoctorInfo.name || "Dr. Name"}
+        </h1>
 
+        {mergedDoctorInfo.qualification && (
+          <p className="font-medium">{mergedDoctorInfo.qualification}</p>
+        )}
 
+        {mergedDoctorInfo.clinic && <p>{mergedDoctorInfo.clinic}</p>}
 
+        {mergedDoctorInfo.address && <p>{mergedDoctorInfo.address}</p>}
 
-{showDoctorInfo && (
-  <div className="flex flex-col gap-0.5 text-black text-sm">
-    <h1 className="text-lg font-bold">{mergedDoctorInfo.name || "Dr. Name"}</h1>
+        <p>Phone: {mergedDoctorInfo.phone || "—"}</p>
+      </div>
 
-    {mergedDoctorInfo.qualification && (
-      <p className="font-medium">{mergedDoctorInfo.qualification}</p>
-    )}
+      {/* Logo (Right) */}
+      <div className="flex flex-col items-center justify-center">
+        <Logo className="w-10 h-8" />
+        <span className="text-xl font-bold">
+          NEXUS <span className="text-gray-400 text-sm align-middle">Rx</span>
+        </span>
+      </div>
+    </>
+  )}
+</div>
 
-    {mergedDoctorInfo.clinic && <p>{mergedDoctorInfo.clinic}</p>}
-
-    {mergedDoctorInfo.address && <p>{mergedDoctorInfo.address}</p>}
-
-    <p>Phone: {mergedDoctorInfo.phone || "—"}</p>
-  </div>
-)}
-
-
-    {/* Logo (Right) */}
-    <div className="flex flex-col items-center justify-center">
-      <Logo className="w-10 h-8" />
-      <span className="text-xl font-bold">
-        NEXUS <span className="text-gray-400 text-sm align-middle">Rx</span>
-      </span>
-    </div>
-  </div>
 
   {/* Horizontal Line */}
   <hr className="border-gray-300 mb-4" />

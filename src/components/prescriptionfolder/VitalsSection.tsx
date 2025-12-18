@@ -67,7 +67,7 @@ export function VitalsSection({ vitals, onVitalsChange }: VitalsSectionProps) {
   };
 
   return (
-  <div className="bg-card p-4 rounded-md">
+  <div className="bg-card p-4 rounded-md bg-slate-100">
   {/* <h3 className="font-semibold text-sm mb-3">Vitals</h3> */}
 
   

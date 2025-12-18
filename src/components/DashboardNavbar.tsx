@@ -142,27 +142,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-interface Profile {
-  full_name: string;
-  clinic_name: string;
-  shift: string;
-}
 
 export function DashboardNavbar() {
-  const { doctor, logout } = useAuth(); // ✅ use doctor and logout
+   const { doctor, activeClinic, logout } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<Profile | null>(null);
+ 
 
-  // Set profile based on doctor info from useAuth
-  useEffect(() => {
-    if (!doctor) return;
-
-    setProfile({
-      full_name: doctor.name || "Doctor",
-      clinic_name: "Clinic", // Replace with real clinic name if needed
-      shift: "",
-    });
-  }, [doctor]);
 
   const handleLogout = () => {
     logout(); // ✅ use logout
@@ -175,18 +160,22 @@ export function DashboardNavbar() {
   return (
     <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between gap-4">
       {/* Left */}
-      <div className="flex items-center gap-4">
-        <SidebarTrigger />
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Welcome,</span>
-            <span className="font-semibold text-foreground">{profile?.full_name || "Doctor"}</span>
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {profile?.clinic_name || "Clinic"} • {profile?.shift || ""}
+       <div className="flex items-center gap-4">
+      <SidebarTrigger />
+
+      <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Welcome,</span>
+          <span className="font-semibold text-foreground">
+            {doctor?.name || "Doctor"}
           </span>
         </div>
+
+        <span className="text-xs text-muted-foreground">
+          {activeClinic?.clinic_name || "Clinic"} • {activeClinic?.clinic_id || ""}
+        </span>
       </div>
+    </div>
 
       {/* Center search */}
       <div className="flex-1 max-w-md">
@@ -219,29 +208,51 @@ export function DashboardNavbar() {
         </DropdownMenu>
 
         {/* Profile */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : "D"}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleProfile}>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+
+       <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="ghost" size="icon">
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="bg-primary text-primary-foreground">
+          {doctor?.name
+            ? doctor.name.charAt(0).toUpperCase()
+            : "D"}
+        </AvatarFallback>
+      </Avatar>
+    </Button>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent align="end" className="w-56">
+    <DropdownMenuLabel>
+      <div className="flex flex-col">
+        <span className="font-medium">
+          {doctor?.name || "Doctor"}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {activeClinic?.clinic_name || "Clinic"} •{" "}
+          {activeClinic?.clinic_id || ""}
+        </span>
+      </div>
+    </DropdownMenuLabel>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuItem onClick={handleProfile}>
+      <User className="mr-2 h-4 w-4" />
+      Profile
+    </DropdownMenuItem>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuItem
+      onClick={logout}
+      className="text-destructive"
+    >
+      Logout
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
       </div>
     </header>
   );

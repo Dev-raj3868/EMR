@@ -200,7 +200,7 @@ const handleEditPrescription = (prescriptionId: string) => {
         {/* Patients Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Registered Patients : Total {filteredPatients.length}</CardTitle>
+            <CardTitle>Total Registered Patients : {filteredPatients.length}</CardTitle>
           </CardHeader>
           <CardContent>
             {filteredPatients.length === 0 ? (
@@ -254,14 +254,14 @@ const handleEditPrescription = (prescriptionId: string) => {
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
-                              {/* <Button
+                              <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setDeletePatientId(patient.id)}
                                 title="Delete Patient"
                               >
                                 <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button> */}
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>

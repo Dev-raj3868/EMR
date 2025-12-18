@@ -61,7 +61,7 @@ export function MedicinesSection({ medicines, onMedicinesChange }: MedicinesSect
   };
 
   return (
-  <div className="bg-card p-4 overflow-x-auto rounded-md">
+  <div className="bg-card p-4 overflow-x-auto rounded-md bg-slate-100">
     {/* <h3 className="font-semibold text-sm mb-3">Medicines</h3> */}
 
     {/* Medicine Form */}

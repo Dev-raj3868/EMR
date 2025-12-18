@@ -344,7 +344,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
-/* API Services */
+/* APIs */
 import {
   searchDoctorProfile,
   createDoctorAuthEMR,
@@ -368,7 +368,6 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  /* ---------------- LOGIN ---------------- */
   const handleLogin = async () => {
     if (!doctorId || !password) {
       toast.error("Doctor ID and password are required");
@@ -393,7 +392,7 @@ const Auth = () => {
     }
   };
 
-  /* ---------------- SIGN UP: VERIFY DOCTOR ---------------- */
+
 const handleVerifyDoctor = async () => {
   if (!doctorId) return toast.error("Please enter Doctor ID");
 
@@ -401,10 +400,8 @@ const handleVerifyDoctor = async () => {
     setLoading(true);
     const res = await searchDoctorProfile({ doctor_id: doctorId });
 
-    // ✅ Check apiSuccess instead of res.doctor
     if (res.apiSuccess !== 1) return toast.error("Doctor ID not found");
 
-    // ✅ Set doctorProfile from root fields
     setDoctorProfile({
       doctor_id: res.doctor_id,
       name: res.doctor_name,
@@ -420,7 +417,6 @@ const handleVerifyDoctor = async () => {
 };
 
 
-  /* ---------------- SIGN UP: CREATE PASSWORD ---------------- */
   const handleCreatePassword = async () => {
     if (!password || password !== confirmPassword) {
       return toast.error("Passwords do not match");
@@ -430,7 +426,7 @@ const handleVerifyDoctor = async () => {
       setLoading(true);
       await createDoctorAuthEMR({ doctor_id: doctorId, password });
       toast.success("Password created successfully");
-      setMode("login"); // go to login after creating password
+      setMode("login");
       setPassword("");
       setConfirmPassword("");
       setDoctorProfile(null);
@@ -443,7 +439,7 @@ const handleVerifyDoctor = async () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/5 to-background p-4 relative overflow-hidden">
-      {/* Background blobs */}
+    
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse" />
